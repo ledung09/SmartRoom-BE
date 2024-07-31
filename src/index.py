@@ -12,7 +12,7 @@ app = FastAPI(title="SmartRoom - 5guys API")
 
 @app.get("/", tags=["Hi 👋"])
 def greetFrom5guys():
-    return {"greeting":"Hello from 5guys"}
+    return {"greeting":"Hello from 5guys!"}
 
 # <-- List of routers here -->
 # Category router
