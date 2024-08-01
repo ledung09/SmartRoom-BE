@@ -1,4 +1,4 @@
-from database.config import supabase
+from database.supabase import supabase
 
 class categoryService:
     def getCategoryList(self):
