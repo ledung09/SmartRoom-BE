@@ -11,7 +11,10 @@ class esService:
                     "autocomplete": { 
                         "query": query, 
                         "path": "name", 
-                        "tokenOrder": "sequential" 
+                        "tokenOrder": "sequential",
+                        "fuzzy": {
+                            "maxEdits": 1
+                        }
                     } 
                 } 
             }, 
