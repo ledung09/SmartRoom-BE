@@ -2,5 +2,5 @@ from database.supabase import supabase
 
 class categoryService:
     def getCategoryList(self):
-        response = supabase.table("Category").select("CategoryName", "Picture").order('CategoryName', desc=False).execute()
+        response = supabase.table("category").select("category_name", "picture").order('category_name', desc=False).execute()
         return response.data

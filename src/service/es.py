@@ -1,5 +1,4 @@
 from database.mongoDB import db
-import json
 
 class esService:
     def getSearchResult(self, query: str):
