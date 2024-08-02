@@ -28,6 +28,5 @@ class productService:
         return response.data[0]
     
     async def getProductFullDetail(self, id: str):
-        # Run MongoDB and Supabase queries in parallel
         mongo_data, supabase_data = await asyncio.gather(self.getProductDetail(id), self.getProductSupplierDetail(id))
         return {**mongo_data, **supabase_data}
