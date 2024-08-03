@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Query
 from service.product import productService
+from interface.product import HeartedProductUpdate
 
 ProductService = productService()
 router = APIRouter()
@@ -10,7 +11,9 @@ async def getProductById(id: str):
     response = await ProductService.getProductFullDetail(id, userId)
     return response
 
+
+
 @router.patch("/hearted/{id}")
-def getProductById(id: str):
+def getProductById(id: str, updateHearted: HeartedProductUpdate):
     userId = 1
-    return ProductService.setProductHeartedDetail(id, userId)
+    return ProductService.setProductHeartedDetail(id, userId, updateHearted)
