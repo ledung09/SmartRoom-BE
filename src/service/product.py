@@ -41,3 +41,11 @@ class productService:
             self.getProductSupplierDetail(id),
             self.getProductHeartedDetail(id, userId))
         return {**productDetail, **supplierDetail, **heartedDetail}
+    
+    def setProductHeartedDetail(self, id: str, userId: str):
+        response = supabase.table("user_product").select('hearted').eq("product_id", id).eq("user_id", userId).execute()
+        
+        if len(response.data) == 0:
+           return supabase.table("user_product").insert({"user_id": userId, "product_id": id, "hearted": True}).execute()
+
+        return supabase.table("user_product").update({"hearted": not response.data[0]['hearted']}).eq("product_id", id).eq("user_id", userId).execute()
