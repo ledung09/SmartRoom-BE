@@ -23,10 +23,21 @@ class productService:
             'supplier_rating').eq("product_id", id).execute()
         
         if len(response.data) == 0:
-            raise HTTPException(status_code=500, detail="Product not found")
+            raise HTTPException(status_code=404, detail="Product not found")
     
         return response.data[0]
     
-    async def getProductFullDetail(self, id: str):
-        mongo_data, supabase_data = await asyncio.gather(self.getProductDetail(id), self.getProductSupplierDetail(id))
-        return {**mongo_data, **supabase_data}
+    async def getProductHeartedDetail(self, id: str, userId: str):
+        response = supabase.table("user_product").select('hearted').eq("product_id", id).eq("user_id", userId).execute()
+        
+        if len(response.data) == 0:
+           return { "hearted": False }
+    
+        return response.data[0]
+    
+    async def getProductFullDetail(self, id: str, userId: str):
+        productDetail, supplierDetail, heartedDetail = await asyncio.gather(
+            self.getProductDetail(id), 
+            self.getProductSupplierDetail(id),
+            self.getProductHeartedDetail(id, userId))
+        return {**productDetail, **supplierDetail, **heartedDetail}

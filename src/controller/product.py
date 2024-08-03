@@ -6,5 +6,6 @@ router = APIRouter()
 
 @router.get("/{id}")
 async def getProductById(id: str):
-    response = await ProductService.getProductFullDetail(id)
+    userId = 1
+    response = await ProductService.getProductFullDetail(id, userId)
     return response
