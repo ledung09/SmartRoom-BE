@@ -5,6 +5,11 @@ EsService = esService()
 router = APIRouter()
 
 @router.get("")
-def getCategory(query: str = Query(..., max_length=255)):
+def getProduct(query: str = Query(..., max_length=255)):
     response = EsService.getSearchResult(query)
+    return response
+
+@router.get("/autocomplete")
+def getAutoCompleteProduct(query: str = Query(..., max_length=255)):
+    response = EsService.getAutoCompleteSearchResult(query)
     return response
