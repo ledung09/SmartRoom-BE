@@ -6,10 +6,12 @@ router = APIRouter()
 
 @router.get("")
 def getProduct(
+    offset: int,
+    limit: int = 1,
     categoryId: int = None,
     priceSort: int = None,
     soldSort: int = None,
-    query: str = Query(..., max_length=255)
+    query: str = None
 ):
     if categoryId is not None and categoryId <= 0:
         raise HTTPException(status_code=400, detail="Invalid categoryId")
@@ -17,7 +19,14 @@ def getProduct(
     if priceSort not in [1, -1, None] or soldSort not in [1, -1, None]:
         raise HTTPException(status_code=400, detail="Invalid sort value")
 
-    response = EsService.getSearchResult(query, categoryId, priceSort, soldSort)
+    response = EsService.getSearchResult(
+        query=query, 
+        categoryId=categoryId, 
+        priceSort=priceSort, 
+        soldSort=soldSort,
+        limit=limit,
+        offset=offset,
+        )
     return response
 
 @router.get("/autocomplete")

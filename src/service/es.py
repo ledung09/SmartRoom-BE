@@ -6,59 +6,65 @@ class esService:
         query: str, 
         categoryId: int, 
         priceSort: int, 
-        soldSort: int
+        soldSort: int,
+        limit: int,
+        offset: int
     ):
+        print(limit)
 
-        # initialize pipeline
+        # Initialize pipeline
         pipeline = []
 
-        # come with search action first
-        pipeline.append({
-            "$search": {
-                "index": "searchProducts",
-                "text": {
-                    "query": query,
-                    "path": ["name", "description"],
-                    "fuzzy": {}
-                }
-            }
-        })
-
-        if categoryId is not None:
-            # Insert $match stage after $search
+        # Add $search stage if query is not empty
+        if query:
             pipeline.append({
-                "$match": {
-                    "category_id": categoryId
+                "$search": {
+                    "index": "searchProducts",
+                    "text": {
+                        "query": query,
+                        "path": ["name", "description"],
+                        "fuzzy": {}
+                    }
                 }
             })
 
-        # Add $addFields stage
-        pipeline.append({
-            "$addFields": {
-                "score": { "$meta": "searchScore" }
-            }
-        })
+            if categoryId is not None:
+                pipeline.append({
+                    "$match": {
+                        "category_id": categoryId
+                    }
+                })
 
+            pipeline.append({
+                "$addFields": {
+                    "score": { "$meta": "searchScore" }
+                }
+            })
+        else:
+            if categoryId is not None:
+                pipeline.append({
+                    "$match": {
+                        "category_id": categoryId
+                    }
+                })
 
-        # handle sort selection
+        # Handle sort selection
         sort_stage = {}
         if priceSort is not None:
             sort_stage["price"] = priceSort
         if soldSort is not None:
             sort_stage["sold"] = soldSort
 
-        pipeline.append({
-            "$sort": sort_stage if sort_stage else { "score": -1 }
-        })
+        # Ensure the results are sorted by score if no other sort is provided
+        if not sort_stage and query:
+            sort_stage = { "score": -1 }
 
+        if sort_stage:
+            pipeline.append({
+                "$sort": sort_stage
+            })
 
-        # pipeline.append({
-        #     "$sort": {
-        #           # Sorting by score in descending order
-        #     }
-        # })
-
-        # add the remaining stages
+        # Add the remaining stages
         pipeline.extend([
             {
                 "$project": {
@@ -69,15 +75,12 @@ class esService:
                 }
             },
             {
-                "$skip": 0
+                "$skip": offset
             },
             {
-                "$limit": 10
+                "$limit": limit
             }
         ])
-
-        print(pipeline)
-
 
         # Execute the aggregation pipeline
         mongo_res = db["core"]["products"].aggregate(pipeline)
@@ -88,6 +91,7 @@ class esService:
             response.append(res)
 
         return response
+
 
     
     def getAutoCompleteSearchResult(self, query: str):
