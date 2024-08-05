@@ -22,7 +22,9 @@ class esService:
                     "index": "searchProducts",
                     "text": {
                         "query": query,
-                        "path": ["name", "description"],
+                        "path": {
+                            'wildcard': "*"
+                        },
                         "fuzzy": {}
                     }
                 }

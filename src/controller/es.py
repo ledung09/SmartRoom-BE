@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Query, HTTPException
 from service.es import esService
+from constant.pagination import DEFAULT_LIMIT
 
 EsService = esService()
 router = APIRouter()
@@ -7,7 +8,7 @@ router = APIRouter()
 @router.get("")
 def getProduct(
     offset: int,
-    limit: int = 1,
+    limit: int = DEFAULT_LIMIT,
     categoryId: int = None,
     priceSort: int = None,
     soldSort: int = None,
