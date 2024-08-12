@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+
 class examplePaintService:
     async def paint(
         background: np.ndarray, 
